@@ -4,6 +4,12 @@
 
 > vue-cli 的 pwa 插件
 
+该插件加入的 service worker 只会在生产环境下 (即只在运行 `npm run build` 或 `yarn build` 时) 开启。在开发环境下开启 service worker 并不推荐，因为它会导致之前的缓存资源被使用而未包含最新的本地改变。
+
+取而代之的是，在开发环境下引入 `noopServiceWorker.js`。这个 service worker 文件会重置之前在相同主机和端口注册过的任何 service worker，有效地达到了 no-op 的目的。
+
+如果你需要本地测试一个 service worker，构建应用并在构建目录运行一个简单的 HTTP 服务器。这里推荐使用浏览器隐私模式以避免浏览器缓存带来的问题。
+
 ## 配置
 
 配置是通过 `vue.config.js` 的 `pwa` 属性或 `package.json` 中的 `"pwa"` 字段处理的。
@@ -49,6 +55,34 @@
 
   - 默认值：`'default'`
 
+- **pwa.assetsVersion**
+
+  - 默认值：`''`
+
+    该选项会为图标和 manifest 文件的 URL 添加 `?v=<pwa.assetsVersion>`。以便在需要的时候应对浏览器缓存。
+
+- **pwa.manifestPath**
+
+  - 默认值：`'manifest.json'`
+
+    应用的 manifest 文件路径。
+
+- **pwa.iconPaths**
+
+  - 默认值：
+
+    ```js
+    {
+      favicon32: 'img/icons/favicon-32x32.png',
+      favicon16: 'img/icons/favicon-16x16.png',
+      appleTouchIcon: 'img/icons/apple-touch-icon-152x152.png',
+      maskIcon: 'img/icons/safari-pinned-tab.svg',
+      msTileImage: 'img/icons/msapplication-icon-144x144.png'
+    }
+    ```
+
+    改变这些值可以为图标设置不同的路径。
+
 ### 配置示例
 
 ```js
@@ -65,7 +99,7 @@ module.exports = {
     // 配置 workbox 插件
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
-      // swSrc 中 InjectManifest 模式下是必填的。
+      // InjectManifest 模式下 swSrc 是必填的。
       swSrc: 'dev/sw.js',
       // ...其它 Workbox 选项...
     }

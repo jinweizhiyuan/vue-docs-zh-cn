@@ -28,7 +28,7 @@
 
 ### 示例
 
-接下来的例子是在 Babel 中写的。TypeScript 的版本[在项目的 `example` 目录中](https://github.com/vuejs/vue-class-component/blob/master/example/App.vue)。
+接下来的例子是在 Babel 中写的。TypeScript 的版本[在项目的 `example` 目录中](https://github.com/vuejs/vue-class-component/blob/master/example/src/App.vue)。
 
 ``` vue
 <template>
@@ -91,7 +91,7 @@ import Component from 'vue-class-component'
 
 // 你可以像声明一个组件一样声明混入。
 @Component
-export class MyMixin extends Vue {
+export default class MyMixin extends Vue {
   mixinValue = 'Hello'
 }
 ```
@@ -171,12 +171,14 @@ import Component from 'vue-class-component'
 class MyComp extends Vue {
   // 这个 class 组件现在处理了 beforeRouteEnter
   // 和 beforeRouteLeave 作为 Vue Router 的钩子
-  beforeRouteEnter () {
+  beforeRouteEnter (to, from, next) {
     console.log('beforeRouteEnter')
+    next() // 需要被调用以确认完成该导航
   }
 
-  beforeRouteLeave () {
+  beforeRouteLeave (to, from, next) {
     console.log('beforeRouteLeave')
+    next() // 需要被调用以确认完成该导航
   }
 }
 ```
@@ -202,7 +204,7 @@ new Vue({
 
 ### Class 属性的注意事项
 
-vue-class-component 会通过在底层将原本构造函数实例化来收集 class 的属性作为 Vue 示例数据。当我们可以像原生 class 一样定义实例数据时，我们有时需要知道它是如何工作的。
+vue-class-component 会通过在底层将原本构造函数实例化来收集 class 的属性作为 Vue 实例数据。当我们可以像原生 class 一样定义实例数据时，我们有时需要知道它是如何工作的。
 
 #### 属性里的 `this` 的值
 
